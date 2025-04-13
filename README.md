@@ -33,9 +33,9 @@ Ce script est idéal pour transformer des images contenant des tableaux ou donn�
 
 ### 1. Téléchargez ce dépôt
 Cloner ce projet avec Git :  
-```bash
+bash
 git clone https://github.com/votre_nom_utilisateur/imgToCSV.git
-cd imgToCSV
+cd imgToCSV 
 
 ### 2. Configuration de Tesseract OCR
 - Téléchargez et installez Tesseract OCR depuis ce lien : https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-v5.2.0.20220712.exe
