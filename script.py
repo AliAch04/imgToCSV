@@ -6,7 +6,7 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Users\ACER\AppData\Local\Tesseract-OCR\tesseract.exe"
 
 def process_image(image_path):
-    """Fonction pour extraire du texte d'une image et le sauvegarder en CSV."""
+    """Fonction pour extraire du texte d'une image, nettoyer les données et sauvegarder en CSV."""
     # Lire l'image
     image = cv2.imread(image_path)
 
@@ -16,67 +16,42 @@ def process_image(image_path):
 
     # Extraire le texte de l'image avec pytesseract
     text = pytesseract.image_to_string(image)
-    
+
     # Transformer le texte extrait en données structurées
     lines = text.strip().split('\n')
-    data = [line.split(';') for line in lines if ';' in line]
+    raw_data = [line.split(';') for line in lines]
 
-    # Valider les données extraites
-    if len(data) < 2:
-        print("Erreur : Les données extraites ne sont pas dans le bon format.")
-        return
+    # Harmoniser les données : nettoyer les lignes et corriger les erreurs
+    cleaned_data = []
+    for row in raw_data:
+        # Supprimer les espaces inutiles et caractères parasites
+        row = [cell.strip().replace(',', '.') for cell in row]
 
-    # Extraire les en-têtes et les lignes
-    columns = data[0]  # Première ligne comme en-têtes de colonnes
-    rows = []
-    for row in data[1:]:
-        if len(row) == len(columns):
-            rows.append(row)  # Ajouter uniquement les lignes valides
+        # Ajouter des colonnes manquantes ou ignorer les lignes incorrectes
+        if len(row) == 8:  # Si une ligne a 8 colonnes, c'est valide
+            cleaned_data.append(row)
+        elif len(row) > 8:  # Si une ligne a trop de colonnes, garder les 8 premières
+            cleaned_data.append(row[:8])
         else:
-            print(f"Ligne ignorée (nombre de colonnes incorrect) : {row}")
+            print(f"Ligne ignorée ou corrigée : {row}")
 
-    # Vérifier qu'il reste des lignes valides
-    if not rows:
-        print("Erreur : Aucune donnée valide extraite.")
+    # Vérifier qu'il y a des données valides après nettoyage
+    if not cleaned_data:
+        print("Erreur : Aucune donnée valide après nettoyage.")
         return
 
-    # Créer un DataFrame avec les données valides
-    df = pd.DataFrame(rows, columns=columns)
+    # Définir les colonnes
+    columns = ["Car", "MPG", "Cylinders", "Displacement", "Horsepower", "Weight", "Acceleration", "Model"]
+
+    # Créer un DataFrame avec les données nettoyées
+    df = pd.DataFrame(cleaned_data, columns=columns)
 
     # Sauvegarder en CSV
     output_csv_path = 'fichier_sortie_from_image.csv'
     df.to_csv(output_csv_path, index=False)
 
-    print(f"Les données extraites de l'image ont été sauvegardées dans {output_csv_path}")
-    """Fonction pour extraire du texte d'une image et le sauvegarder en CSV."""
-    # Lire l'image
-    image = cv2.imread(image_path)
+    print(f"Les données nettoyées ont été sauvegardées dans {output_csv_path}")
 
-    if image is None:
-        print("Erreur : Impossible de lire l'image. Vérifiez le chemin.")
-        return
-
-    # Extraire le texte de l'image avec pytesseract
-    text = pytesseract.image_to_string(image)
-    
-    # Transformer le texte extrait en données structurées
-    lines = text.strip().split('\n')
-    data = [line.split(';') for line in lines if ';' in line]
-
-    # Valider et créer le DataFrame
-    if len(data) < 2:
-        print("Erreur : Les données extraites ne sont pas au bon format.")
-        return
-
-    columns = data[0]
-    rows = data[1:]
-    df = pd.DataFrame(rows, columns=columns)
-
-    # Sauvegarder en CSV
-    output_csv_path = 'fichier_sortie_from_image.csv'
-    df.to_csv(output_csv_path, index=False)
-
-    print(f"Les données extraites de l'image ont été sauvegardées dans {output_csv_path}")
 
 def process_text_directly():
     """Fonction pour insérer du texte directement et le sauvegarder en CSV."""
