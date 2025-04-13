@@ -63,3 +63,6 @@ cd imgToCSV
 ## Développement Futur
 - Ajouter une interface graphique utilisateur (GUI) pour une utilisation plus conviviale.
 - Permettre d'utiliser d'autres formats de sortie, comme Excel (.xlsx).
+
+## Licence
+- Ce projet est sous licence MIT. Consultez le fichier LICENSE pour plus d'informations.
