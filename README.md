@@ -56,3 +56,10 @@ cd imgToCSV
 
 ### Validation des données
 - Les lignes mal formatées ou contenant un nombre incorrect de colonnes sont ignorées.
+
+### Nettoyage automatique
+- Les caractères parasites comme les , sont convertis en . pour normaliser les nombres.
+
+## Développement Futur
+- Ajouter une interface graphique utilisateur (GUI) pour une utilisation plus conviviale.
+- Permettre d'utiliser d'autres formats de sortie, comme Excel (.xlsx).
